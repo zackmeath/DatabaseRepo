@@ -7,12 +7,12 @@ where aid in (
 	select aid
 	from orders
 	where cid = 'c002'
-	)
+	);
 
 --2. Get the cities of agents booking an order for customer c002. This time, no subqueries.
 select a.city
 from agents a, orders o
-where a.aid = o.aid and o.cid = 'c002'
+where a.aid = o.aid and o.cid = 'c002';
 
 --3. Get the pids of products ordered through any agent who makes at least one order for a customer in Kyoto. Use subqueries.
 select distinct pid
@@ -26,7 +26,7 @@ where aid in (
 		where city = 'Kyoto'
 		)
 	)
-order by pid
+order by pid;
 
 --4. Get the pids of products ordered through any agent who makes at least one order for a customer in Kyoto. Use joins this time; no subqueries.
 --select p.pid
@@ -42,14 +42,14 @@ from customers
 where cid not in (
 	select distinct cid
 	from orders
-	)
+	);
 	
 
 --6. Get the names of customers who have never placed an order. Use an outer join.
 select *
 from customers c left outer join orders o
 ON o.cid=c.cid
-where ordno is null
+where ordno is null;
 
 
 --7. Get the names of customers who placed at least one order through an agent in their city, along with those agent(s) names.
@@ -62,10 +62,19 @@ where ordno is null
 select distinct c.name, a.name, c.city
 from customers c, agents a
 where  c.city = a.city
-order by city
+order by city;
 
 --9. Get the name and city of customers who live in the city where the least number of products are made.
-
+select c.name, c.city
+from customers c
+where c.city in (
+	select city
+	from products
+	where quantity in (
+		select min(quantity)
+		from products
+		)
+;	)
 
 --10. Get the name and city of customers who live in a city where the most number of products are made.
 
@@ -74,13 +83,24 @@ order by city
 
 
 --12. List the products whose priceUSD is above the average priceUSD.
-
+select *
+from products
+where priceUSD > (
+	select avg(priceUSD)
+	from products
+	);
 
 --13. Show the customer name, pid ordered, and the dollars for all customer orders, sorted by dollars from high to low.
-
+select c.name, o.pid, o.dollars
+from customers c, orders o
+where c.cid = o.cid
+order by dollars desc;
 
 --14. Show all customer names (in order) and their total ordered, and nothing more. Use coalesce to avoid showing NULLs.
-
+select c.name, sum(o.dollars)
+from customers c, orders o
+where c.cid = o.cid
+group by c.name
 
 --15. Show the names of all customers who bought products from agents based in New York along with the names of the products they ordered, 
 --and the names of the agents who sold it to them.
