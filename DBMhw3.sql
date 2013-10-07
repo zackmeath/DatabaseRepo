@@ -97,18 +97,26 @@ where c.cid = o.cid
 order by dollars desc;
 
 --14. Show all customer names (in order) and their total ordered, and nothing more. Use coalesce to avoid showing NULLs.
-select c.name, sum(o.dollars)
-from customers c, orders o
-where c.cid = o.cid
-group by c.name
+select c.name, coalesce( sum(o.dollars), 0.00)
+from customers c left outer join orders o
+on c.cid = o.cid
+group by c.cid
+order by c.name
+
 
 --15. Show the names of all customers who bought products from agents based in New York along with the names of the products they ordered, 
 --and the names of the agents who sold it to them.
+select c.name, p.name, a.name
+from customers c full outer join orders o on o.cid = c.cid 
+full outer join agents a on a.aid = o.aid 
+full outer join products p on p.pid = o.pid
+where a.city='New York'
 
-
-
---16. Write a query to check the accuracy of the dollars column in the Orders table. This means calculating Orders.dollars from other data in 
---other tables and then comparing those values to the values in Orders.dollars.
+--16. Write a query to check the accuracy of the dollars column in the Orders table. 
+select o.qty,  p.priceUSD, c.discount, o.dollars
+from products p right outer join orders o on p.pid=o.pid
+left outer join customers c on c.cid = o.cid
+where (o.qty * p.priceUSD) * (1 - c.discount/100) = o.dollars
 
 
 --17. Create an error in the dollars column of the Orders table so that you can verify your accuracy checking query
