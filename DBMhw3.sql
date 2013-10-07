@@ -30,9 +30,12 @@ order by pid;
 
 --4. Get the pids of products ordered through any agent who makes at least one order for a customer in Kyoto. Use joins this time; no subqueries.
 select distinct p.pid
-from customers c
-where c.city = 'Kyoto'
-left outer join orders o on c.cid = o.cid
+from orders o
+inner join customers c on c.cid = o.cid and c.city = 'Kyoto'
+inner join orders o2 on o.aid = o2.aid
+inner join products p on o2.pid = p.pid
+order by p.pid
+
 
 
 --5. Get the names of customers who have never placed an order. Use a subquery.
@@ -45,7 +48,7 @@ where cid not in (
 	
 
 --6. Get the names of customers who have never placed an order. Use an outer join.
-select *
+select c.name
 from customers c 
 left outer join orders o
 ON o.cid=c.cid
@@ -53,7 +56,7 @@ where ordno is null;
 
 
 --7. Get the names of customers who placed at least one order through an agent in their city, along with those agent(s) names.
-select c.name, a.name
+select distinct c.name, a.name
 from customers c 
 inner join orders o on c.cid = o.cid
 inner join agents a on a.city = c.city
