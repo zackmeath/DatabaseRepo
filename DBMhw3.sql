@@ -1,4 +1,4 @@
---Zack Meath's Home work #3 for Database Management
+--Zack Meath's Homework #3 for Database Management
 
 --1. Get the cities of agents booking an order for customer c002. Use a subquery.
 select city
@@ -35,8 +35,6 @@ inner join customers c on c.cid = o.cid and c.city = 'Kyoto'
 inner join orders o2 on o.aid = o2.aid
 inner join products p on o2.pid = p.pid
 order by p.pid
-
-
 
 --5. Get the names of customers who have never placed an order. Use a subquery.
 select name
